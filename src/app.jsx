@@ -217,86 +217,75 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
       if (currentView === 'list') {
         return (
           <div className="min-vh-100 bg-light py-4">
-            <div className="container">
-              <div className="card shadow-sm">
-                <div className="card-body p-5">
-                  <div className="d-flex align-items-center justify-content-between mb-4">
-                    <div className="d-flex align-items-center">
-                      <Users className="me-3" size={32} />
-                      <h1 className="h3 mb-0">משפחות הישוב</h1>
-                    </div>
-                    <div className="d-flex align-items-center gap-3">
-                      {isAdmin && (
-                        <button
-                          onClick={handleAdminLogout}
-                          className="btn btn-secondary d-flex align-items-center gap-2"
-                        >
-                          <LogOut size={16} />
-                          יציאה ממנהל
-                        </button>
-                      )}
-                      <button
-                        onClick={() => setCurrentView('form')}
-                        className="btn btn-primary d-flex align-items-center gap-2"
-                      >
-                        <Plus size={20} />
-                        הוסף משפחה חדשה
-                      </button>
-                    </div>
-                  </div>
+            <div className="container">          
+                <div className="topbar">
+                  <Users className="me-3" size={32} />
+                  <h1 className="h3 mb-0">משפחות הישוב</h1>
+                </div>
+                <div className="d-flex align-items-center gap-3">
+                  {isAdmin && (
+                    <button
+                      onClick={handleAdminLogout}
+                      className="btn btn-secondary d-flex align-items-center gap-2"
+                    >
+                      <LogOut size={16} />
+                      יציאה ממנהל
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setCurrentView('form')}
+                    className="btn btn-primary d-flex align-items-center gap-2"
+                  >
+                    <Plus size={20} />
+                    הוסף משפחה חדשה
+                  </button>
+                </div>
 
-                  {families.length === 0 ? (
-                    <div className="text-center py-5">
-                      <Users className="text-muted mb-3" size={64} />
-                      <p className="h5 text-muted mb-4">עדיין אין משפחות רשומות</p>
-                      <button
-                        onClick={() => addFirstFamely()}
-                        className="btn btn-primary btn-lg"
-                      >
-                        הוסף את המשפחה הראשונה
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="row row-cols-1 g-4">
-                      {families.map((family) => (
-                        <div key={family.id} className="col">
-                          <div className="card h-100 border-light shadow-sm">
-                            <div className="card-body d-flex align-items-center justify-content-between">
-                              <div 
-                                className="d-flex align-items-center cursor-pointer flex-grow-1"
-                                onClick={() => viewFamily(family)}
-                              >
-                                <div className="avatar-circle bg-primary text-white rounded-circle me-3" style={{ width: '48px', height: '48px', fontSize: '20px' }}>
-                                  {family.familyName.charAt(0)}
-                                </div>
-                                <div>
-                                  <h5 className="card-title mb-1">משפחת {family.familyName}</h5>
-                                  <p className="card-text text-muted">{family.members.length} בני משפחה • נרשם: {family.submittedAt}</p>
-                                </div>
+                {families.length === 0 ? (
+                  <div className="text-center py-5">
+                    <Users className="text-muted mb-3" size={64} />
+                    <p className="h5 text-muted mb-4">עדיין אין משפחות רשומות</p>
+                    <button
+                      onClick={() => addFirstFamely()}
+                      className="btn btn-primary btn-lg"
+                    >
+                      הוסף את המשפחה הראשונה
+                    </button>
+                  </div>
+                ) : (
+                  <div className="rows">
+                    {families.map((family) => (
+                      <div key={family.id} className="col">
+                          <div className="card">
+                            <div 
+                              className="d-flex align-items-center cursor-pointer flex-grow-1"
+                              onClick={() => viewFamily(family)}
+                            >
+                              <div>
+                                <h5 className="card-title mb-1">משפחת {family.familyName}</h5>
+                                <p className="card-text text-muted">{family.members.length} בני משפחה • נרשם: {family.submittedAt}</p>
                               </div>
-                              <div className="d-flex align-items-center gap-2">
-                                {isAdmin && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      deleteFamily(family.id, family.familyName);
-                                    }}
-                                    className="btn btn-danger btn-sm"
-                                    title="מחק משפחה"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
-                                )}
-                                <ArrowRight className="text-muted" size={20} />
-                              </div>
+                            </div>
+                            <div className="d-flex align-items-center gap-2">
+                              {isAdmin && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteFamily(family.id, family.familyName);
+                                  }}
+                                  className="btn btn-danger btn-sm"
+                                  title="מחק משפחה"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              )}
+                              <ArrowRight className="text-muted" size={20} />
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+                    ))}
+                  </div>
+                )}
 
               {showAdminLogin && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
