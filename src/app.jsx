@@ -6,6 +6,7 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
    
     const ResidentApp = () => {
       const [families, setFamilies] = useState([]);
+      const [filteredFamilies, setFilteredFamilies] = useState([]);
       const [currentView, setCurrentView] = useState('list');
       const [selectedFamily, setSelectedFamily] = useState(null);
       const [formData, setFormData] = useState({
@@ -17,11 +18,6 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
           { name: '', phone: '', role: 'אם' }
         ]
       });
-
-      useEffect(() => {
-     
-      }, []);
-
       
       const [isGettingLocation, setIsGettingLocation] = useState(false);
       const [isAdmin, setIsAdmin] = useState(false);
@@ -32,7 +28,7 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
 
        // Fetch families from Firestore on component mount
        
-      useEffect(() => {
+       useEffect(() => {
         const fetchFamilies = async () => {
           const familiesCollection = collection(db, 'families');
           const familiesSnapshot = await getDocs(familiesCollection);
@@ -41,8 +37,9 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
             ...doc.data()
           }));
           setFamilies(familiesData);
+          setFilteredFamilies(familiesData); 
         };
-
+      
         fetchFamilies();
       }, []);
 
@@ -208,24 +205,31 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
         setSelectedFamily(family);
         setCurrentView('details');
       };
+      const filter = (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const result = families.filter((family) => {
+          if ((family.familyName || '').toLowerCase().includes(searchTerm)) return true;
+        
+          // Optionally include this line to also search in members' names:
+          if (family.members.some(member => (member.name || '').toLowerCase().includes(searchTerm))) return true;
+        
+          return false; // fallback if no match
+        });
+        setFilteredFamilies(result);
+      };
       
       if (currentView === 'list') {
+       
         return (
-          <div style={{padding: '20px '}}>
+          <div style={{padding: '20px 0'}}>
             <div className=""  style={{padding: '10px 20px'}}>          
                 <div className="topbar">                  
-                  <h1 className="h3 mb-0"><Users className="me-3" size={32} /> משפחות הישוב</h1>
+                  <h1 className="h3 mb-0"><Users className="me-3" size={32} /><span style={{marginRight:'10px'}}>משפחות הישוב</span></h1>
                 </div>
-                <div className="d-flex align-items-center gap-3">
-                  {isAdmin && (
-                    <button
-                      onClick={handleAdminLogout}
-                      className="btn btn-secondary d-flex align-items-center gap-2"
-                    >
-                      <LogOut size={16} />
-                      יציאה ממנהל
-                    </button>
-                  )}
+                <div>
+                  <input type="text" className="form-control mb-3" onKeyUp={filter} style={{margin:'10px'}} placeholder="חפש משפחה לפי שם" />
+                </div>
+                <div className="d-flex align-items-center gap-3">                
                   <button
                     onClick={() => setCurrentView('form')}
                     className="btn btn-primary d-flex align-items-center gap-2"
@@ -237,7 +241,7 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                 </div>
               </div>
               <div className="rows">
-                {families.map((family) => (
+                {filteredFamilies.map((family) => (
                   <div key={family.id} className="col">
                       <div style={{backgroundColor:'#fff', borderBottom: '3px solid #aaa' ,margin:'0px 0px 10px',padding: '10px 19px'}} >
                         <div 
