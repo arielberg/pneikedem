@@ -6,17 +6,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="manifest.json" />
     <title>פני קדם</title>
+    <style>
+    #installPrompt {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      width: 100vw;
+      z-index: 1;
+      margin-top:200px;
+    }      
+    #app.installPrompt {
+        margin-bottom: 80px;
+    }
+    </style>
   </head>
   <body dir="rtl" style="direction: rtl;">
-    <button id="installApp">Install</button>
+    <div id="installPrompt" style="display:none">
+      <p>האם ברצונך להתקין את האפליקציה?</p>
+      <button id="installApp">התקן</button>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
       let deferredPrompt;
       window.addEventListener('beforeinstallprompt', (e) => {
           deferredPrompt = e;
+          
       });
-  
+      document.getElementById('installPrompt').style.display = 'block';
+      document.getElementById('app').classList.add('installPrompt');
+
       const installApp = document.getElementById('installApp');
       installApp.addEventListener('click', async () => {
           if (deferredPrompt !== null) {

@@ -235,6 +235,7 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                   <button
                     onClick={() => setCurrentView('form')}
                     className="btn btn-primary d-flex align-items-center gap-2"
+                    style={{ margin: '10px 0' }}
                   >
                     <Plus size={20} />
                     הוסף משפחה חדשה
@@ -502,8 +503,8 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                     <div className="col-12 text-center">
                       <div className="card">
                         <div className="card-body">
-                          <div className="avatar-circle bg-primary text-white rounded-circle mx-auto mb-3" style={{ width: '80px', height: '80px', fontSize: '32px' }}>
-                            {selectedFamily.familyName.charAt(0)}
+                          <div className="avatar-circle bg-primary text-white rounded-circle mx-auto mb-3" style={{ padding:'15px 5px', width: '80px', height: '80px', fontSize: '32px' }}>
+                            <Users size={45} />
                           </div>
                           <h2 className="h4 mb-2">משפחת {selectedFamily.familyName}</h2>
                           <p className="text-muted">נרשם: {selectedFamily.submittedAt}</p>
@@ -540,8 +541,8 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                             <div className="card">
                               <div className="card-body d-flex align-items-center justify-content-between">
                                 <div className="d-flex align-items-center gap-3">
-                                  <div className="avatar-circle bg-primary-subtle text-primary rounded-circle" style={{ width: '40px', height: '40px', fontSize: '16px' }}>
-                                    {member.name.charAt(0) || member.role.charAt(0)}
+                                  <div className="avatar-circle bg-primary-subtle text-primary rounded-circle" style={{ padding:'4px 5px', width: '40px', height: '40px', fontSize: '16px' }}>
+                                    <User size={30} />
                                   </div>
                                   <div>
                                     <p className="fw-semibold mb-1">{member.name || 'ללא שם'}</p>
@@ -550,7 +551,7 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                                   </div>
                                 </div>
                                 {member.phone && (
-                                  <div className="d-flex gap-2">
+                                  <div className="  gap-2">
                                     <button
                                       onClick={() => handleWhatsApp(member.phone)}
                                       className="btn btn-success btn-sm d-flex align-items-center gap-2"
