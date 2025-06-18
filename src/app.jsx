@@ -209,18 +209,12 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
         setCurrentView('details');
       };
       
-      const addFirstFamely = () => {  
-        
-        setCurrentView('form');
-      }
-
       if (currentView === 'list') {
         return (
-          <div className="min-vh-100 bg-light py-4">
-            <div className="container">          
-                <div className="topbar">
-                  <Users className="me-3" size={32} />
-                  <h1 className="h3 mb-0">משפחות הישוב</h1>
+          <div style={{padding: '20px '}}>
+            <div className=""  style={{padding: '10px 20px'}}>          
+                <div className="topbar">                  
+                  <h1 className="h3 mb-0"><Users className="me-3" size={32} /> משפחות הישוב</h1>
                 </div>
                 <div className="d-flex align-items-center gap-3">
                   {isAdmin && (
@@ -241,52 +235,36 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                     הוסף משפחה חדשה
                   </button>
                 </div>
-
-                {families.length === 0 ? (
-                  <div className="text-center py-5">
-                    <Users className="text-muted mb-3" size={64} />
-                    <p className="h5 text-muted mb-4">עדיין אין משפחות רשומות</p>
-                    <button
-                      onClick={() => addFirstFamely()}
-                      className="btn btn-primary btn-lg"
-                    >
-                      הוסף את המשפחה הראשונה
-                    </button>
-                  </div>
-                ) : (
-                  <div className="rows">
-                    {families.map((family) => (
-                      <div key={family.id} className="col">
-                          <div className="card">
-                            <div 
-                              className="d-flex align-items-center cursor-pointer flex-grow-1"
-                              onClick={() => viewFamily(family)}
-                            >
-                              <div>
-                                <h5 className="card-title mb-1">משפחת {family.familyName}</h5>
-                                <p className="card-text text-muted">{family.members.length} בני משפחה • נרשם: {family.submittedAt}</p>
-                              </div>
-                            </div>
-                            <div className="d-flex align-items-center gap-2">
-                              {isAdmin && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    deleteFamily(family.id, family.familyName);
-                                  }}
-                                  className="btn btn-danger btn-sm"
-                                  title="מחק משפחה"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-                              )}
-                              <ArrowRight className="text-muted" size={20} />
-                            </div>
+              </div>
+              <div className="rows">
+                {families.map((family) => (
+                  <div key={family.id} className="col">
+                      <div style={{backgroundColor:'#fff', borderBottom: '3px solid #aaa' ,margin:'0px 0px 10px',padding: '10px 19px'}} >
+                        <div 
+                          onClick={() => viewFamily(family)}
+                        >
+                          <div>
+                            <h5 className="card-title mb-1">משפחת {family.familyName} ({family.members.filter(s=>s.role=='אב'||s.role=='אם').map(s=>s.name).join(',')})</h5>
+                            <p className="card-text text-muted">{family.members.length} בני משפחה</p>
                           </div>
                         </div>
-                    ))}
-                  </div>
-                )}
+                        <div className="d-flex align-items-center gap-2">
+                          {isAdmin && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteFamily(family.id, family.familyName);
+                              }}
+                              className="btn btn-danger btn-sm"
+                              title="מחק משפחה"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                ))}
 
               {showAdminLogin && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -336,147 +314,141 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
 
       if (currentView === 'form') {
         return (
-          <div className="min-vh-100 bg-light py-4">
-            <div className="container">
-              <div className="card shadow-sm">
-                <div className="card-body p-5">
-                  <div className="d-flex align-items-center justify-content-between mb-4">
-                    <h1 className="h3 mb-0">רישום משפחה חדשה</h1>
-                    <button
-                      onClick={() => setCurrentView('list')}
-                      className="btn btn-link text-decoration-none d-flex align-items-center gap-2"
-                    >
-                      <ArrowLeft size={20} />
-                      חזור לרשימה
-                    </button>
+            <div style={{ padding: '20px' }}>             
+                <div className="d-flex align-items-center justify-content-between mb-4">
+                  <h1 className="h3 mb-0">רישום משפחה חדשה</h1>
+                  <button
+                    onClick={() => setCurrentView('list')}
+                    className="btn btn-link text-decoration-none d-flex align-items-center gap-2"
+                  >
+                    <ArrowLeft size={20} />
+                    חזור לרשימה
+                  </button>
+                </div>
+
+                <div className="row g-4">
+                  <div className="col-12">
+                    <label className="form-label">שם המשפחה *</label>
+                    <input
+                      type="text"
+                      value={formData.familyName}
+                      onChange={(e) => handleFamilyInputChange('familyName', e.target.value)}
+                      className="form-control"
+                      placeholder="הכנס את שם המשפחה"
+                    />
                   </div>
 
-                  <div className="row g-4">
-                    <div className="col-12">
-                      <label className="form-label">שם המשפחה *</label>
-                      <input
-                        type="text"
-                        value={formData.familyName}
-                        onChange={(e) => handleFamilyInputChange('familyName', e.target.value)}
-                        className="form-control"
-                        placeholder="הכנס את שם המשפחה"
-                      />
+                  <div className="col-12">
+                    <label className="form-label">מיקום בוויז *</label>
+                    <input
+                      type="text"
+                      value={formData.wazeLocation}
+                      onChange={(e) => handleFamilyInputChange('wazeLocation', e.target.value)}
+                      className="form-control mb-3"
+                      placeholder="כתובת מלאה או הדבק קישור מגוגל מפות"
+                    />
+                    <button
+                      onClick={getCurrentLocation}
+                      disabled={isGettingLocation}
+                      className="btn btn-outline-primary mb-3"
+                    >
+                      {isGettingLocation ? 'מקבל מיקום...' : 'קבל מיקום נוכחי'}
+                    </button>
+                    <div className="alert alert-info">
+                      <strong className="d-block mb-2">💡 דרכים לקבל את המיקום שלך:</strong>
+                      <ul className="mb-0">
+                        <li>פתח גוגל מפות בטלפון → שתף מיקום → העתק קישור</li>
+                        <li>בוויז: לחץ על הבית → שתף → העתק קישור</li>
+                        <li>כתוב כתובת מלאה: "רחוב 123, עיר"</li>
+                        <li>בגוגל: חפש את הכתובת שלך → העתק הקואורדינטות</li>
+                      </ul>
                     </div>
+                  </div>
 
-                    <div className="col-12">
-                      <label className="form-label">מיקום בוויז *</label>
-                      <input
-                        type="text"
-                        value={formData.wazeLocation}
-                        onChange={(e) => handleFamilyInputChange('wazeLocation', e.target.value)}
-                        className="form-control mb-3"
-                        placeholder="כתובת מלאה או הדבק קישור מגוגל מפות"
-                      />
+                  <div className="col-12">
+                    <div className="d-flex align-items-center justify-content-between mb-3">
+                      <label className="form-label">בני המשפחה *</label>
                       <button
-                        onClick={getCurrentLocation}
-                        disabled={isGettingLocation}
-                        className="btn btn-outline-primary mb-3"
+                        type="button"
+                        onClick={addFamilyMember}
+                        className="btn btn-success btn-sm d-flex align-items-center gap-2"
                       >
-                        {isGettingLocation ? 'מקבל מיקום...' : 'קבל מיקום נוכחי'}
+                        <UserPlus size={16} />
+                        הוסף בן משפחה
                       </button>
-                      <div className="alert alert-info">
-                        <strong className="d-block mb-2">💡 דרכים לקבל את המיקום שלך:</strong>
-                        <ul className="mb-0">
-                          <li>פתח גוגל מפות בטלפון → שתף מיקום → העתק קישור</li>
-                          <li>בוויז: לחץ על הבית → שתף → העתק קישור</li>
-                          <li>כתוב כתובת מלאה: "רחוב 123, עיר"</li>
-                          <li>בגוגל: חפש את הכתובת שלך → העתק הקואורדינטות</li>
-                        </ul>
-                      </div>
                     </div>
 
-                    <div className="col-12">
-                      <div className="d-flex align-items-center justify-content-between mb-3">
-                        <label className="form-label">בני המשפחה *</label>
-                        <button
-                          type="button"
-                          onClick={addFamilyMember}
-                          className="btn btn-success btn-sm d-flex align-items-center gap-2"
-                        >
-                          <UserPlus size={16} />
-                          הוסף בן משפחה
-                        </button>
-                      </div>
-
-                      {formData.members.map((member, index) => (
-                        <div key={index} className="card mb-3">
-                          <div className="card-body">
-                            <div className="d-flex align-items-center justify-content-between mb-3">
-                              <div className="d-flex align-items-center gap-2">
-                                <User size={20} />
-                                <span className="fw-medium">בן משפחה {index + 1}</span>
-                              </div>
-                              {formData.members.length > 1 && (
-                                <button
-                                  type="button"
-                                  onClick={() => removeFamilyMember(index)}
-                                  className="btn btn-link text-danger p-0"
-                                >
-                                  <X size={16} />
-                                </button>
-                              )}
+                    {formData.members.map((member, index) => (
+                      <div key={index} className="card mb-3">
+                        <div className="card-body">
+                          <div className="d-flex align-items-center justify-content-between mb-3">
+                            <div className="d-flex align-items-center gap-2">
+                              <User size={20} />
+                              <span className="fw-medium">בן משפחה {index + 1}</span>
                             </div>
-                            <div className="row g-3">
-                              <div className="col-md-4">
-                                <input
-                                  type="text"
-                                  value={member.role}
-                                  onChange={(e) => handleMemberChange(index, 'role', e.target.value)}
-                                  className="form-control"
-                                  placeholder="תפקיד (אב/אם/ילד)"
-                                />
-                              </div>
-                              <div className="col-md-4">
-                                <input
-                                  type="text"
-                                  value={member.name}
-                                  onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
-                                  className="form-control"
-                                  placeholder="שם פרטי"
-                                />
-                              </div>
-                              <div className="col-md-4">
-                                <input
-                                  type="tel"
-                                  value={member.phone}
-                                  onChange={(e) => handleMemberChange(index, 'phone', e.target.value)}
-                                  className="form-control"
-                                  placeholder="טלפון"
-                                />
-                              </div>
+                            {formData.members.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeFamilyMember(index)}
+                                className="btn btn-link text-danger p-0"
+                              >
+                                <X size={16} />
+                              </button>
+                            )}
+                          </div>
+                          <div className="row g-3">
+                            <div className="col-md-4">
+                              <input
+                                type="text"
+                                value={member.role}
+                                onChange={(e) => handleMemberChange(index, 'role', e.target.value)}
+                                className="form-control"
+                                placeholder="תפקיד (אב/אם/ילד)"
+                              />
+                            </div>
+                            <div className="col-md-4">
+                              <input
+                                type="text"
+                                value={member.name}
+                                onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
+                                className="form-control"
+                                placeholder="שם פרטי"
+                              />
+                            </div>
+                            <div className="col-md-4">
+                              <input
+                                type="tel"
+                                value={member.phone}
+                                onChange={(e) => handleMemberChange(index, 'phone', e.target.value)}
+                                className="form-control"
+                                placeholder="טלפון"
+                              />
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
+                  </div>
 
-                    <div className="col-12">
-                      <button
-                        onClick={handleFormSubmit}
-                        className="btn btn-success w-100"
-                      >
-                        שלח טופס משפחה
-                      </button>
-                    </div>
+                  <div className="col-12">
+                    <button
+                      onClick={handleFormSubmit}
+                      className="btn btn-success w-100"
+                    >
+                      שלח טופס משפחה
+                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
         );
       }
 
       if (currentView === 'details' && selectedFamily) {
         return (
-          <div className="min-vh-100 bg-light py-4">
-            <div className="container">
-              <div className="card shadow-sm">
-                <div className="card-body p-5">
+          <div>
+            <div style={{'padding': '20px'}}>
+              <div>
+                <div>
                   <div className="d-flex align-items-center justify-content-between mb-4">
                     <h1 className="h3 mb-0">משפחת {selectedFamily.familyName}</h1>
                     <div className="d-flex align-items-center gap-3">
@@ -550,25 +522,28 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                                     {member.phone && <p className="text-muted">{member.phone}</p>}
                                   </div>
                                 </div>
+                                
+                              </div>
                                 {member.phone && (
-                                  <div className="  gap-2">
+                                  <div className="gap-2">
                                     <button
                                       onClick={() => handleWhatsApp(member.phone)}
-                                      className="btn btn-success btn-sm d-flex align-items-center gap-2"
+                                      className="btn btn-success"
+                                      style={{width: '50%', borderRadius: '0 0 4px'}}
                                     >
-                                      <MessageCircle size={16} />
-                                      וואטסאפ
+                                      <MessageCircle size={16} /><span style={{marginRight:'5px'}}>ווטסאפ</span>
+                                      
                                     </button>
                                     <button
                                       onClick={() => handleCall(member.phone)}
-                                      className="btn btn-primary btn-sm d-flex align-items-center gap-2"
+                                      className="btn btn-primary"
+                                      style={{width: '50%', borderRadius: '0 0 0 4px'}}
                                     >
-                                      <Phone size={16} />
-                                      התקשר
+                                      <Phone size={16} /><span style={{marginRight:'5px'}}>התקשר</span>
+                                      
                                     </button>
                                   </div>
                                 )}
-                              </div>
                             </div>
                           </div>
                         ))}
