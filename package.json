@@ -9,12 +9,15 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@tanstack/router-plugin": "^1.121.29",
+    "@vitejs/plugin-react": "^4.5.2",
     "lucide-react": "^0.441.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.121.27",
     "bootstrap": "^5.3.6",
     "firebase": "^11.9.1",
     "workbox-core": "^7.3.0",
