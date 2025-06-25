@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { Phone, Navigation, Users, ArrowRight, ArrowLeft, Plus, MessageCircle, MapPin, Trash2, Lock, LogOut, User, UserPlus, X } from 'lucide-react';
 import db from './firebaseConfig'; // Import Firestore instance
 import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addDoc and collection
-   
+import { getAuth, RecaptchaVerifier } from "firebase/auth";
+
     const ResidentApp = () => {
       const [families, setFamilies] = useState([]);
       const [filteredFamilies, setFilteredFamilies] = useState([]);
@@ -227,7 +228,7 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                   <h1 className="h3 mb-0"><Users className="me-3" size={32} /><span style={{marginRight:'10px'}}>משפחות הישוב</span></h1>
                 </div>
                 <div>
-                  <input type="text" className="form-control mb-3" onKeyUp={filter} style={{margin:'10px'}} placeholder="חפש משפחה לפי שם" />
+                  <input type="text" className="form-control mb-3" onKeyUp={filter} style={{margin:'10px 0'}} placeholder="חפש משפחה לפי שם" />
                 </div>
                 <div className="d-flex align-items-center gap-3">                
                   <button
@@ -327,7 +328,7 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                   >
                     <ArrowLeft size={20} />
                     חזור לרשימה
-                  </button>
+                  </button>                  
                 </div>
 
                 <div className="row g-4">
@@ -446,6 +447,21 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
               </div>
         );
       }
+     
+     
+        if (currentView === 'login') {
+          const auth = getAuth();
+          if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new RecaptchaVerifier('sign-in-button', {
+              size: 'invisible',
+              callback: (response) => {
+                console.log('Recaptcha verified:', response);
+              }
+            }, auth);
+          }
+          return (
+            <div>aaa</div>
+      )}
 
       if (currentView === 'details' && selectedFamily) {
         return (
@@ -472,6 +488,7 @@ import { addDoc, getDocs, collection } from 'firebase/firestore'; // Import addD
                         <ArrowLeft size={20} />
                         חזור לרשימה
                       </button>
+                      <button onClick={() => setCurrentView('login')}>ערוך</button>
                     </div>
                   </div>
 
