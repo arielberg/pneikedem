@@ -1,20 +1,43 @@
+const CACHE_NAME = 'cache-v1';
+console.log('v8 worker.js loaded');
 self.addEventListener('install', (event) => {
-  console.log('[ServiceWorker] Installed');
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+  );
 });
 
-self.addEventListener('fetch', async (event) => {
-  console.log('[ServiceWorker] Fetching:', event.request.url);
+self.addEventListener('activate', (event) => {
+  console.log('worker activate');
+  event.waitUntil(
+    clients.claim()
+  );
+});
 
-  // Check if the request is for a specific resource
-  if (event.request.url.includes('example-resource')) {
-    // Respond with a custom response
-    event.respondWith(
-      new Response('This is a custom response for example-resource', {
-        headers: { 'Content-Type': 'text/plain' }
-      })
-    );
-  } else {
-    // Default fetch handling
-    event.respondWith(fetch(event.request));
-  } 
+self.addEventListener('fetch', (event) => {
+  if (event.request.url.startsWith('ws://') || event.request.url.startsWith('wss://')) {
+    return; // Skip WebSocket requests
+  }
+  
+  console.log('worker fetch:', event.request.url, event.request.method);
+  if (event.request.method !== 'GET') return;
+
+  event.respondWith(
+    caches.match(event.request).then(cachedResponse => {
+      if (cachedResponse) {
+        console.log('from cache:', event.request.url);
+        return cachedResponse;
+      }
+
+      return fetch(event.request).then(networkResponse => {
+        console.log(')::', event.request.url);
+        return caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+      }).catch(() => {
+        return new Response('Offline', { status: 503 });
+      });
+    })
+  );
 });
